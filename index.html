@@ -503,6 +503,11 @@
       .apptitle {
         font-weight: 900;
       }
+
+      .pdfbutton {
+        background-color: #9e0000;
+        border-color: #9e0000;
+      }
     </style>
   </head>
 
@@ -530,12 +535,12 @@
           >
             Export JSON
           </button>
-          <button class="btn small ghost" type="button" id="btnReset">
-            Reset
+
+          <button class="btn small pdfbutton" type="button" id="btnPrint">
+            Print PDF
           </button>
-          <button class="btn small" type="button" id="btnPrint">PDF</button>
           <button class="btn small secondary" type="button" id="btnExportCSV">
-            Export CSV
+            Download CSV
           </button>
         </div>
       </div>
@@ -648,19 +653,23 @@
           </div>
 
           <div class="grid">
-            <div class="row">
+            <div class="hidden">
               <label
                 >Ship-To Address Information (Where product will be
                 shipped)</label
               >
-
-              <div class="hint">
-                Bill-To and Pay-From can be copied automatically from Ship-To.
-              </div>
             </div>
 
             <div class="panel" style="margin-top: 6px">
-              <div class="panel-h">Ship-To Address</div>
+              <div class="panel-h">
+                Ship-To Address (Where product will be shipped)
+              </div>
+
+              <div class="panel-sub">
+                <label class="check-line" style="font-weight: 900">
+                  Bill-To and Pay-From can be copied automatically from Ship-To.
+                </label>
+              </div>
 
               <div class="panel-b">
                 <div class="row">
@@ -693,7 +702,7 @@
 
                   <div class="field-error" data-for="shipDistMode"></div>
                 </div>
-                <div class="row">
+                <!-- <div class="row">
                   <label for="shipFacility">Facility Name </label>
 
                   <input
@@ -705,9 +714,9 @@
                   />
 
                   <div class="field-error" data-for="shipFacility"></div>
-                </div>
+                </div> -->
 
-                <div class="row">
+                <!-- <div class="row">
                   <label for="shipDba">DBA Name (Doing Business As)</label>
 
                   <input
@@ -718,7 +727,7 @@
                   />
 
                   <div class="field-error" data-for="shipDba"></div>
-                </div>
+                </div> -->
                 <div class="row">
                   <label for="shipClassOfTrade"
                     >Class of Trade<span class="req">*</span></label
@@ -751,7 +760,7 @@
                   <div class="field-error" data-for="shipAddr1"></div>
                 </div>
 
-                <div class="row">
+                <!-- <div class="row">
                   <label for="shipAddr2">Address Line 2</label>
 
                   <input
@@ -762,7 +771,7 @@
                   />
 
                   <div class="field-error" data-for="shipAddr2"></div>
-                </div>
+                </div> -->
                 <div class="row">
                   <label for="shipPOBoxNumber"
                     >PO Box Number (if applicable)</label
@@ -863,7 +872,7 @@
                   <div class="field-error" data-for="shipCity"></div>
                 </div>
 
-                <div class="row">
+                <!-- <div class="row">
                   <label for="shipAltPhone">Alternate Business Phone#</label>
 
                   <input
@@ -876,9 +885,9 @@
                   />
 
                   <div class="field-error" data-for="shipAltPhone"></div>
-                </div>
+                </div> -->
 
-                <div class="row">
+                <!-- <div class="row">
                   <label>Do you want to receive “Electronic Invoices”?</label>
 
                   <div class="radio-line">
@@ -891,7 +900,7 @@
                       ><input type="radio" name="eInv" value="No" /> No</label
                     >
                   </div>
-                </div>
+                </div> -->
                 <div class="row">
                   <label for="shipEmailAddress"
                     >Email Address <span class="req">*</span></label
@@ -952,7 +961,7 @@
 
                     <div class="field-error" data-for="billDistMode"></div>
                   </div>
-                  <div class="row">
+                  <!-- <div class="row">
                     <label for="billFacility">Facility Name</label>
 
                     <input
@@ -963,9 +972,9 @@
                     />
 
                     <div class="field-error" data-for="billFacility"></div>
-                  </div>
+                  </div> -->
 
-                  <div class="row">
+                  <!-- <div class="row">
                     <label for="billDba">DBA Name (Doing Business As)</label>
 
                     <input
@@ -976,7 +985,7 @@
                     />
 
                     <div class="field-error" data-for="billDba"></div>
-                  </div>
+                  </div> -->
                   <div class="row">
                     <label for="billClassOfTrade">Class Of Trade</label>
 
@@ -1003,7 +1012,7 @@
                     <div class="field-error" data-for="billAddr1"></div>
                   </div>
 
-                  <div class="row">
+                  <!-- <div class="row">
                     <label for="billAddr2">Address Line 2</label>
 
                     <input
@@ -1014,7 +1023,7 @@
                     />
 
                     <div class="field-error" data-for="billAddr2"></div>
-                  </div>
+                  </div> -->
                   <div class="row">
                     <label for="billPOBoxNumber">PO Box Number</label>
 
@@ -1176,7 +1185,7 @@
 
                     <div class="field-error" data-for="payDistMode"></div>
                   </div>
-                  <div class="row">
+                  <!-- <div class="row">
                     <label for="payFacility">Facility Name</label>
 
                     <input
@@ -1187,9 +1196,9 @@
                     />
 
                     <div class="field-error" data-for="payFacility"></div>
-                  </div>
+                  </div> -->
 
-                  <div class="row">
+                  <!-- <div class="row">
                     <label for="payDba">DBA Name (Doing Business As)</label>
 
                     <input
@@ -1200,7 +1209,7 @@
                     />
 
                     <div class="field-error" data-for="payDba"></div>
-                  </div>
+                  </div> -->
                   <div class="row">
                     <label for="payClassOfTrade">Class Of Trade</label>
 
@@ -1226,7 +1235,7 @@
                     <div class="field-error" data-for="payAddr1"></div>
                   </div>
 
-                  <div class="row">
+                  <!-- <div class="row">
                     <label for="payAddr2">Address Line 2</label>
 
                     <input
@@ -1237,7 +1246,7 @@
                     />
 
                     <div class="field-error" data-for="payAddr2"></div>
-                  </div>
+                  </div> -->
                   <div class="row">
                     <label for="payPOBoxNumber">PO Box Number</label>
 
@@ -1776,12 +1785,15 @@
             </div>
 
             <div class="row">
-              <label for="additionalComments">Additional Comments</label>
+              <label for="additionalComments"
+                >Additional Comments<span class="req">*</span></label
+              >
 
               <textarea
                 id="additionalComments"
                 name="additionalComments"
                 data-label="Additional Comments"
+                data-required="true"
               ></textarea>
 
               <div class="field-error" data-for="additionalComments"></div>
@@ -1792,9 +1804,9 @@
               Incomplete information may require follow-up.
             </div>
 
-            <div class="divider"></div>
+            <div class="divider hidden"></div>
 
-            <div class="row">
+            <div class="row hidden">
               <label>Preview Output (JSON)</label>
 
               <div class="hint">
@@ -1802,7 +1814,7 @@
               </div>
             </div>
 
-            <pre id="output">{}</pre>
+            <pre id="output" class="hidden">{}</pre>
           </div>
         </div>
 
@@ -1810,16 +1822,31 @@
           <div class="status" id="status">Ready.</div>
 
           <div style="display: flex; gap: 10px; flex-wrap: wrap">
+            <button class="btn small ghost" type="button" id="btnReset">
+              <img
+                src="https://www.svgrepo.com/show/501336/reset.svg"
+                height="15px"
+                width="15px"
+              />
+            </button>
             <button class="btn small ghost" type="button" id="btnSaveDraft">
-              Save Data
+              <img
+                src="https://www.svgrepo.com/show/509215/save-alt.svg"
+                height="15px"
+                width="15px"
+              />
             </button>
 
             <button class="btn small ghost" type="button" id="btnLoadDraft">
-              Load Data
+              <img
+                src="https://www.svgrepo.com/show/451710/media-playback-start.svg"
+                height="15px"
+                width="15px"
+              />
             </button>
 
             <button type="button" class="btn ghost" id="btnPrev">
-              Previous
+              Back
             </button>
 
             <button type="button" class="btn" id="btnNext">Next</button>
@@ -1957,11 +1984,29 @@
         }
 
         function updateButtons() {
-          $('btnPrev').disabled = currentStep === 0
+          if (currentStep === 0) {
+            $('btnPrev').disabled = true
+            $('btnPrev').classList.add('hidden')
+          } else {
+            $('btnPrev').disabled = false
+            $('btnPrev').classList.remove('hidden')
+          }
 
-          $('btnNext').disabled = currentStep === stepDefs.length - 1
+          if (currentStep === stepDefs.length - 1) {
+            $('btnNext').disabled = true
+            $('btnNext').classList.add('hidden')
+          } else {
+            $('btnNext').disabled = false
+            $('btnNext').classList.remove('hidden')
+          }
 
-          $('btnSubmit').disabled = currentStep !== stepDefs.length - 1
+          if (currentStep !== stepDefs.length - 1) {
+            $('btnSubmit').disabled = true
+            $('btnSubmit').classList.add('hidden')
+          } else {
+            $('btnSubmit').disabled = false
+            $('btnSubmit').classList.remove('hidden')
+          }
         }
 
         // ---------- Validation ----------
@@ -2373,6 +2418,12 @@
         // ---------- Draft ----------
 
         function saveDraft() {
+          if (
+            !confirm(
+              'Are you sure you want to save this as a draft? The previously saved draft will be overwritten.'
+            )
+          )
+            return
           const data = collectData()
 
           localStorage.setItem(
@@ -2384,6 +2435,13 @@
         }
 
         function loadDraft() {
+          if (
+            !confirm(
+              'Are you sure you want to load the draft? Any unsaved changes will be overwritten.'
+            )
+          )
+            return
+          clearValidationMessages()
           const raw = localStorage.getItem(DRAFT_KEY)
 
           if (!raw) {
@@ -2424,7 +2482,6 @@
 
           refreshOutputPreview()
           restoreDropdownState()
-
           setStatus(`Draft loaded (savedAt: ${parsed.savedAt || 'unknown'}).`)
         }
 
@@ -2596,6 +2653,13 @@
 
           autosyncCopies()
 
+          clearValidationMessages()
+          showStep(0)
+
+          setStatus('Reset complete.')
+        }
+
+        function clearValidationMessages() {
           // clear validation visuals
 
           Array.from(document.querySelectorAll('.invalid,.valid')).forEach(
@@ -2609,9 +2673,9 @@
             e.textContent = ''
           })
 
-          showStep(0)
+          errorsBox.style.display = 'none'
 
-          setStatus('Reset complete.')
+          errorsBox.textContent = ''
         }
 
         // ---------- Wire Buttons ----------
