@@ -1,0 +1,2690 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <title>MDM Smart Form</title>
+
+    <style>
+      :root {
+        --primary: #eb1700;
+
+        --primary2: #8f3b8f;
+
+        --border: #b8b8b8;
+
+        --bg: #f4f4f6;
+
+        --panel: #ffffff;
+
+        --label: #2b2b2b;
+
+        --muted: #6b6b6b;
+
+        --danger: #9e0000;
+
+        --ok: #1b7a1b;
+
+        --header: #efefef;
+
+        --shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0; /* remove default margin */
+        display: flex;
+        align-items: center; /* vertical center */
+        justify-content: center; /* horizontal center */
+        min-height: 100vh; /* ensure full viewport height */
+        background: var(--bg);
+        font-family: Johnson Display, Arial, sans-serif;
+        color: #111;
+      }
+
+      .wrap {
+        width: 1200px;
+        margin: 18px auto;
+        padding: 14px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+
+        padding: 14px 16px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+      }
+
+      .brand {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .brand .name {
+        font-size: 34px;
+        font-weight: 800;
+        color: #c74a4a;
+        font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+      }
+
+      .brand .sub {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 800;
+        letter-spacing: 0.8px;
+      }
+
+      .right-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .btn {
+        border: 1px solid #2d6ea3;
+        background: #004685;
+        color: #fff;
+        padding: 8px 15px;
+
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .btn.secondary {
+        border-color: #4a8f4a;
+        background: #53a453;
+      }
+
+      .btn.ghost {
+        border-color: #9aa3aa;
+        background: #e8ecef;
+        color: #1b1b1b;
+      }
+
+      .btn.danger {
+        border-color: #b00020;
+        background: #b00020;
+      }
+
+      .btn.small {
+        padding: 8px 10px;
+        font-size: 12px;
+        border-radius: 8px;
+      }
+
+      .btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .progress-wrap {
+        margin-top: 12px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+
+        border-radius: 10px;
+        padding: 12px 14px;
+        box-shadow: var(--shadow);
+      }
+
+      .progress-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .progressbar {
+        flex: 1;
+        min-width: 280px;
+        height: 12px;
+        border-radius: 999px;
+        background: #e6e6e9;
+        border: 1px solid #d2d2d6;
+
+        overflow: hidden;
+      }
+
+      .progressbar > div {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #328714, #328714);
+        transition: width 0.25s ease;
+      }
+
+      .stepmeta {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 800;
+      }
+
+      .steps {
+        margin-top: 10px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .chip {
+        border: 1px solid #d6d6da;
+        background: #fafafa;
+        color: #222;
+        font-weight: 800;
+
+        padding: 7px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .chip.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+      }
+
+      .chip.done {
+        border-color: #86b186;
+        background: #eaf7ea;
+      }
+
+      .chip.blocked {
+        border-color: #e3b0b8;
+        background: #fff3f5;
+      }
+
+      form {
+        margin-top: 12px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+      }
+
+      .section-title {
+        background: var(--primary);
+        color: #fff;
+        font-weight: 900;
+        padding: 10px 14px;
+
+        font-size: 14px;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+      }
+
+      .grid {
+        padding: 12px 14px 16px;
+        border-top: 1px solid var(--border);
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 10px;
+        align-items: center;
+        margin: 7px 0;
+      }
+
+      .row.compact {
+        grid-template-columns: 260px 1fr 1fr;
+      }
+
+      label {
+        color: var(--label);
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .req {
+        color: var(--danger);
+        font-weight: 900;
+        margin-left: 4px;
+      }
+
+      input[type='text'],
+      input[type='email'],
+      input[type='tel'],
+      select,
+      textarea {
+        width: 100%;
+        padding: 9px 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 13px;
+        background: #fff;
+
+        outline: none;
+      }
+
+      input.invalid,
+      select.invalid,
+      textarea.invalid {
+        border-color: var(--danger);
+        box-shadow: 0 0 0 3px rgba(176, 0, 32, 0.12);
+      }
+
+      input.valid,
+      select.valid,
+      textarea.valid {
+        border-color: #7bbf7b;
+        box-shadow: 0 0 0 3px rgba(83, 164, 83, 0.1);
+      }
+
+      textarea {
+        min-height: 80px;
+        resize: vertical;
+      }
+
+      .hint {
+        grid-column: 2/-1;
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: -2px;
+        font-weight: 700;
+      }
+
+      .warn {
+        grid-column: 2/-1;
+        color: var(--danger);
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .warn2 {
+        grid-column: 2/-1;
+        color: var(--ghost);
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .field-error {
+        grid-column: 2/-1;
+        color: var(--danger);
+        font-size: 12px;
+        font-weight: 900;
+        display: none;
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .panel {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+        background: #fff;
+      }
+
+      .panel .panel-h {
+        background: #3a3a3a;
+        color: #fff;
+        font-weight: 900;
+        padding: 8px 10px;
+        font-size: 13px;
+        text-transform: uppercase;
+      }
+
+      .panel .panel-sub {
+        padding: 8px 10px 0;
+        color: #2b2b2b;
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .panel .panel-b {
+        padding: 10px;
+      }
+
+      .mini {
+        display: grid;
+        grid-template-columns: 1fr 110px;
+        gap: 10px;
+      }
+
+      .radio-line,
+      .check-line {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .radio-line label,
+      .check-line label {
+        font-weight: 900;
+      }
+
+      .radio-line input,
+      .check-line input {
+        transform: translateY(1px);
+      }
+
+      .divider {
+        height: 1px;
+        background: var(--border);
+        margin: 10px 0;
+      }
+
+      .step {
+        display: none;
+      }
+
+      .step.active {
+        display: block;
+      }
+
+      .footerbar {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 12px 14px;
+        border-top: 1px solid var(--border);
+
+        background: #fafafa;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .status {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 900;
+      }
+
+      pre {
+        margin: 12px 14px 16px;
+        background: #0b0b0b;
+        color: #eaeaea;
+        padding: 14px;
+        border-radius: 10px;
+        overflow: auto;
+
+        border: 1px solid #1e1e1e;
+      }
+
+      .errorbox {
+        display: none;
+        margin: 10px 14px 0;
+        padding: 10px 12px;
+        border: 1px solid var(--danger);
+
+        border-radius: 10px;
+        color: var(--danger);
+        background: #fff5f7;
+        font-size: 12px;
+        font-weight: 900;
+
+        margin-bottom: 10px;
+      }
+
+      @media print {
+        body {
+          background: #fff !important;
+        }
+
+        .topbar,
+        .progress-wrap,
+        .footer,
+        .actions {
+          display: none !important;
+        }
+
+        .wrap {
+          max-width: 100% !important;
+          padding: 0 !important;
+        }
+
+        form {
+          box-shadow: none !important;
+          border-radius: 0 !important;
+        }
+
+        .section {
+          page-break-inside: avoid;
+        }
+
+        h3 {
+          color: #000 !important;
+        }
+      }
+
+      @media (max-width: 980px) {
+        .row,
+        .row.compact {
+          grid-template-columns: 1fr;
+        }
+
+        .two-col {
+          grid-template-columns: 1fr;
+        }
+
+        .mini {
+          grid-template-columns: 1fr;
+        }
+
+        .right-actions {
+          justify-content: flex-start;
+        }
+
+        .topbar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .apptitle {
+        font-weight: 900;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <div class="topbar">
+        <div class="brand">
+          <img
+            src="https://www.pngall.com/wp-content/uploads/15/Johnson-And-Johnson-Logo-PNG-Background.png"
+            width="160"
+            height="50"
+          />
+        </div>
+
+        <div class="apptitle">
+          Customer Master Creation Modification Form - Rio Vista Urgent and
+          Primary Care
+        </div>
+
+        <div class="right-actions">
+          <button
+            class="btn small ghost hidden"
+            type="button"
+            id="btnExportJSON"
+          >
+            Export JSON
+          </button>
+          <button class="btn small ghost" type="button" id="btnReset">
+            Reset
+          </button>
+          <button class="btn small" type="button" id="btnPrint">PDF</button>
+          <button class="btn small secondary" type="button" id="btnExportCSV">
+            Export CSV
+          </button>
+        </div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-row">
+          <div class="stepmeta">Live Progress</div>
+          <div class="progressbar" aria-label="progress">
+            <div id="bar"></div>
+          </div>
+
+          <div class="stepmeta" id="stepMeta">Step 1 of 5</div>
+        </div>
+
+        <div class="steps" id="stepChips"></div>
+      </div>
+
+      <form id="form" novalidate>
+        <div class="errorbox" id="errors"></div>
+
+        <!-- STEP 1 -->
+
+        <div class="step active" data-step="0">
+          <div class="section-title">
+            Section A: Request & Account Name Details
+          </div>
+
+          <div class="grid">
+            <div class="row">
+              <label for="companyName"
+                >Company Name <span class="req">*</span></label
+              >
+
+              <input
+                id="companyName"
+                name="companyName"
+                type="text"
+                data-required="true"
+                data-label="Company Name"
+              />
+
+              <div class="field-error" data-for="companyName"></div>
+            </div>
+
+            <div class="row">
+              <label for="dept">Request Number</label>
+
+              <input
+                id="dept"
+                name="dept"
+                type="text"
+                data-label="Department / Division"
+                placeholder="Internal Use Only"
+              />
+
+              <div class="field-error" data-for="dept"></div>
+            </div>
+          </div>
+
+          <div class="section-title">Section B: Requestor Details</div>
+
+          <div class="grid">
+            <div class="row">
+              <label for="reqToSupport">Reason for Request</label>
+
+              <input
+                id="reqToSupport"
+                name="reqToSupport"
+                type="text"
+                data-label="Requestor to Support"
+              />
+
+              <div class="field-error" data-for="reqToSupport"></div>
+            </div>
+
+            <div class="row">
+              <label for="reqName">Requestor Name</label>
+
+              <input
+                id="reqName"
+                name="reqName"
+                type="text"
+                data-label="Requestor Name"
+              />
+
+              <div class="field-error" data-for="reqName"></div>
+            </div>
+
+            <div class="row">
+              <label for="reqEmail">Requestor Email Address</label>
+
+              <input
+                id="reqEmail"
+                name="reqEmail"
+                type="email"
+                data-label="Requestor Email"
+                data-type="email"
+              />
+
+              <div class="field-error" data-for="reqEmail"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+
+        <div class="step" data-step="1">
+          <div class="section-title">
+            Section C: Structure Creation (Ship-To / Bill-To / Pay-From)
+          </div>
+
+          <div class="grid">
+            <div class="row">
+              <label
+                >Ship-To Address Information (Where product will be
+                shipped)</label
+              >
+
+              <div class="hint">
+                Bill-To and Pay-From can be copied automatically from Ship-To.
+              </div>
+            </div>
+
+            <div class="panel" style="margin-top: 6px">
+              <div class="panel-h">Ship-To Address</div>
+
+              <div class="panel-b">
+                <div class="row">
+                  <label for="shipNameLine1"
+                    >Name Line 1<span class="req">*</span></label
+                  >
+
+                  <input
+                    id="shipNameLine1"
+                    name="shipNameLine1"
+                    type="text"
+                    data-required="true"
+                    data-label="Name Line 1"
+                  />
+
+                  <div class="field-error" data-for="shipNameLine1"></div>
+                </div>
+                <div class="row">
+                  <label for="shipDistMode"
+                    >Dist Mode<span class="req">*</span></label
+                  >
+
+                  <input
+                    id="shipDistMode"
+                    name="shipDistMode"
+                    type="text"
+                    data-required="true"
+                    data-label="Dist Mode"
+                  />
+
+                  <div class="field-error" data-for="shipDistMode"></div>
+                </div>
+                <div class="row">
+                  <label for="shipFacility">Facility Name </label>
+
+                  <input
+                    id="shipFacility"
+                    name="shipFacility"
+                    type="text"
+                    data-required="false"
+                    data-label="Ship-To Facility Name"
+                  />
+
+                  <div class="field-error" data-for="shipFacility"></div>
+                </div>
+
+                <div class="row">
+                  <label for="shipDba">DBA Name (Doing Business As)</label>
+
+                  <input
+                    id="shipDba"
+                    name="shipDba"
+                    type="text"
+                    data-label="Ship-To DBA Name"
+                  />
+
+                  <div class="field-error" data-for="shipDba"></div>
+                </div>
+                <div class="row">
+                  <label for="shipClassOfTrade"
+                    >Class of Trade<span class="req">*</span></label
+                  >
+
+                  <input
+                    id="shipClassOfTrade"
+                    name="shipClassOfTrade"
+                    type="text"
+                    data-required="true"
+                    data-label="Class of Trade"
+                  />
+
+                  <div class="field-error" data-for="shipClassOfTrade"></div>
+                </div>
+
+                <div class="row">
+                  <label for="shipAddr1"
+                    >Address Line 1 <span class="req">*</span></label
+                  >
+
+                  <input
+                    id="shipAddr1"
+                    name="shipAddr1"
+                    type="text"
+                    data-required="true"
+                    data-label="Ship-To Address Line 1"
+                  />
+
+                  <div class="field-error" data-for="shipAddr1"></div>
+                </div>
+
+                <div class="row">
+                  <label for="shipAddr2">Address Line 2</label>
+
+                  <input
+                    id="shipAddr2"
+                    name="shipAddr2"
+                    type="text"
+                    data-label="Ship-To Address Line 2"
+                  />
+
+                  <div class="field-error" data-for="shipAddr2"></div>
+                </div>
+                <div class="row">
+                  <label for="shipPOBoxNumber"
+                    >PO Box Number (if applicable)</label
+                  >
+
+                  <input
+                    id="shipPOBoxNumber"
+                    name="shipPOBoxNumber"
+                    type="text"
+                    data-required="false"
+                    data-label="PO Box Number"
+                  />
+
+                  <div class="field-error" data-for="shipPOBoxNumber"></div>
+                </div>
+
+                <div class="row compact">
+                  <label for="shipCity">City <span class="req">*</span></label>
+
+                  <input
+                    id="shipCity"
+                    name="shipCity"
+                    type="text"
+                    data-required="true"
+                    data-label="Ship-To City"
+                  />
+
+                  <div class="mini">
+                    <select
+                      id="shipState"
+                      name="shipState"
+                      data-label="Ship-To State"
+                      data-type="state2"
+                    >
+                      <option value="">Select State</option>
+                      <option value="AL">Alabama</option>
+                      <option value="AK">Alaska</option>
+                      <option value="AZ">Arizona</option>
+                      <option value="AR">Arkansas</option>
+                      <option value="CA">California</option>
+                      <option value="CO">Colorado</option>
+                      <option value="CT">Connecticut</option>
+                      <option value="DE">Delaware</option>
+                      <option value="FL">Florida</option>
+                      <option value="GA">Georgia</option>
+                      <option value="HI">Hawaii</option>
+                      <option value="ID">Idaho</option>
+                      <option value="IL">Illinois</option>
+                      <option value="IN">Indiana</option>
+                      <option value="IA">Iowa</option>
+                      <option value="KS">Kansas</option>
+                      <option value="KY">Kentucky</option>
+                      <option value="LA">Louisiana</option>
+                      <option value="ME">Maine</option>
+                      <option value="MD">Maryland</option>
+                      <option value="MA">Massachusetts</option>
+                      <option value="MI">Michigan</option>
+                      <option value="MN">Minnesota</option>
+                      <option value="MS">Mississippi</option>
+                      <option value="MO">Missouri</option>
+                      <option value="MT">Montana</option>
+                      <option value="NE">Nebraska</option>
+                      <option value="NV">Nevada</option>
+                      <option value="NH">New Hampshire</option>
+                      <option value="NJ">New Jersey</option>
+                      <option value="NM">New Mexico</option>
+                      <option value="NY">New York</option>
+                      <option value="NC">North Carolina</option>
+                      <option value="ND">North Dakota</option>
+                      <option value="OH">Ohio</option>
+                      <option value="OK">Oklahoma</option>
+                      <option value="OR">Oregon</option>
+                      <option value="PA">Pennsylvania</option>
+                      <option value="RI">Rhode Island</option>
+                      <option value="SC">South Carolina</option>
+                      <option value="SD">South Dakota</option>
+                      <option value="TN">Tennessee</option>
+                      <option value="TX">Texas</option>
+                      <option value="UT">Utah</option>
+                      <option value="VT">Vermont</option>
+                      <option value="VA">Virginia</option>
+                      <option value="WA">Washington</option>
+                      <option value="WV">West Virginia</option>
+                      <option value="WI">Wisconsin</option>
+                      <option value="WY">Wyoming</option>
+                    </select>
+
+                    <input
+                      id="shipPostal"
+                      name="shipPostal"
+                      type="text"
+                      placeholder="Postal"
+                      data-label="Ship-To Postal Code"
+                      data-type="postal"
+                    />
+                  </div>
+
+                  <div class="field-error" data-for="shipCity"></div>
+                </div>
+
+                <div class="row">
+                  <label for="shipAltPhone">Alternate Business Phone#</label>
+
+                  <input
+                    id="shipAltPhone"
+                    name="shipAltPhone"
+                    type="tel"
+                    placeholder="e.g., 734-869-8703"
+                    data-label="Ship-To Alternate Business Phone"
+                    data-type="phone"
+                  />
+
+                  <div class="field-error" data-for="shipAltPhone"></div>
+                </div>
+
+                <div class="row">
+                  <label>Do you want to receive “Electronic Invoices”?</label>
+
+                  <div class="radio-line">
+                    <label
+                      ><input type="radio" name="eInv" value="Yes" checked />
+                      Yes</label
+                    >
+
+                    <label
+                      ><input type="radio" name="eInv" value="No" /> No</label
+                    >
+                  </div>
+                </div>
+                <div class="row">
+                  <label for="shipEmailAddress"
+                    >Email Address <span class="req">*</span></label
+                  >
+
+                  <input
+                    id="shipEmailAddress"
+                    name="shipEmailAddress"
+                    type="text"
+                    data-required="true"
+                    data-label="Email Address"
+                  />
+
+                  <div class="field-error" data-for="shipEmailAddress"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="two-col">
+              <div class="panel">
+                <div class="panel-h">
+                  Bill-To Information (Where invoices will be sent)
+                </div>
+
+                <div class="panel-sub">
+                  <label class="check-line" style="font-weight: 900">
+                    <input type="checkbox" id="billSameAsShip" checked />
+
+                    Check this box if Bill-To Address is same as above current
+                    Ship-To address
+                  </label>
+                </div>
+
+                <div class="panel-b">
+                  <div class="row">
+                    <label for="billNameLine1">Name Line 1</label>
+
+                    <input
+                      id="billNameLine1"
+                      name="billNameLine1"
+                      type="text"
+                      data-label="Name Line 1"
+                    />
+
+                    <div class="field-error" data-for="billNameLine1"></div>
+                  </div>
+                  <div class="row">
+                    <label for="billDistMode">Dist Mode</label>
+
+                    <input
+                      id="billDistMode"
+                      name="billDistMode"
+                      type="text"
+                      data-label="Dist Mode"
+                    />
+
+                    <div class="field-error" data-for="billDistMode"></div>
+                  </div>
+                  <div class="row">
+                    <label for="billFacility">Facility Name</label>
+
+                    <input
+                      id="billFacility"
+                      name="billFacility"
+                      type="text"
+                      data-label="Bill-To Facility Name"
+                    />
+
+                    <div class="field-error" data-for="billFacility"></div>
+                  </div>
+
+                  <div class="row">
+                    <label for="billDba">DBA Name (Doing Business As)</label>
+
+                    <input
+                      id="billDba"
+                      name="billDba"
+                      type="text"
+                      data-label="Bill-To DBA Name"
+                    />
+
+                    <div class="field-error" data-for="billDba"></div>
+                  </div>
+                  <div class="row">
+                    <label for="billClassOfTrade">Class Of Trade</label>
+
+                    <input
+                      id="billClassOfTrade"
+                      name="billClassOfTrade"
+                      type="text"
+                      data-label="Class Of Trade"
+                    />
+
+                    <div class="field-error" data-for="billClassOfTrade"></div>
+                  </div>
+
+                  <div class="row">
+                    <label for="billAddr1">Address Line 1</label>
+
+                    <input
+                      id="billAddr1"
+                      name="billAddr1"
+                      type="text"
+                      data-label="Bill-To Address Line 1"
+                    />
+
+                    <div class="field-error" data-for="billAddr1"></div>
+                  </div>
+
+                  <div class="row">
+                    <label for="billAddr2">Address Line 2</label>
+
+                    <input
+                      id="billAddr2"
+                      name="billAddr2"
+                      type="text"
+                      data-label="Bill-To Address Line 2"
+                    />
+
+                    <div class="field-error" data-for="billAddr2"></div>
+                  </div>
+                  <div class="row">
+                    <label for="billPOBoxNumber">PO Box Number</label>
+
+                    <input
+                      id="billPOBoxNumber"
+                      name="billPOBoxNumber"
+                      type="text"
+                      data-label="PO Box Number"
+                    />
+
+                    <div class="field-error" data-for="billPOBoxNumber"></div>
+                  </div>
+
+                  <div class="row compact">
+                    <label for="billCity">City</label>
+                    <input
+                      id="billCity"
+                      name="billCity"
+                      type="text"
+                      data-label="Bill-To City"
+                    />
+                    <div class="field-error" data-for="billCity"></div>
+
+                    <select
+                      id="billState"
+                      name="billState"
+                      data-label="Bill-To State"
+                      data-type="state2"
+                    >
+                      <option value="">Select State</option>
+                      <option value="AL">Alabama</option>
+                      <option value="AK">Alaska</option>
+                      <option value="AZ">Arizona</option>
+                      <option value="AR">Arkansas</option>
+                      <option value="CA">California</option>
+                      <option value="CO">Colorado</option>
+                      <option value="CT">Connecticut</option>
+                      <option value="DE">Delaware</option>
+                      <option value="FL">Florida</option>
+                      <option value="GA">Georgia</option>
+                      <option value="HI">Hawaii</option>
+                      <option value="ID">Idaho</option>
+                      <option value="IL">Illinois</option>
+                      <option value="IN">Indiana</option>
+                      <option value="IA">Iowa</option>
+                      <option value="KS">Kansas</option>
+                      <option value="KY">Kentucky</option>
+                      <option value="LA">Louisiana</option>
+                      <option value="ME">Maine</option>
+                      <option value="MD">Maryland</option>
+                      <option value="MA">Massachusetts</option>
+                      <option value="MI">Michigan</option>
+                      <option value="MN">Minnesota</option>
+                      <option value="MS">Mississippi</option>
+                      <option value="MO">Missouri</option>
+                      <option value="MT">Montana</option>
+                      <option value="NE">Nebraska</option>
+                      <option value="NV">Nevada</option>
+                      <option value="NH">New Hampshire</option>
+                      <option value="NJ">New Jersey</option>
+                      <option value="NM">New Mexico</option>
+                      <option value="NY">New York</option>
+                      <option value="NC">North Carolina</option>
+                      <option value="ND">North Dakota</option>
+                      <option value="OH">Ohio</option>
+                      <option value="OK">Oklahoma</option>
+                      <option value="OR">Oregon</option>
+                      <option value="PA">Pennsylvania</option>
+                      <option value="RI">Rhode Island</option>
+                      <option value="SC">South Carolina</option>
+                      <option value="SD">South Dakota</option>
+                      <option value="TN">Tennessee</option>
+                      <option value="TX">Texas</option>
+                      <option value="UT">Utah</option>
+                      <option value="VT">Vermont</option>
+                      <option value="VA">Virginia</option>
+                      <option value="WA">Washington</option>
+                      <option value="WV">West Virginia</option>
+                      <option value="WI">Wisconsin</option>
+                      <option value="WY">Wyoming</option>
+                    </select>
+                  </div>
+
+                  <div class="row">
+                    <label for="billPostal">Postal Code</label>
+                    <input
+                      id="billPostal"
+                      name="billPostal"
+                      type="text"
+                      data-label="Bill-To Postal"
+                    />
+                    <div class="field-error" data-for="billPostal"></div>
+                  </div>
+                  <div class="row">
+                    <label for="billEmailAddress">Email Address</label>
+
+                    <input
+                      id="billEmailAddress"
+                      name="billEmailAddress"
+                      type="text"
+                      data-label="Email Address"
+                    />
+
+                    <div class="field-error" data-for="billEmailAddress"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel">
+                <div class="panel-h">
+                  Pay-From Information (From where invoices will be paid)
+                </div>
+
+                <div class="panel-sub">
+                  <div class="radio-line">
+                    <span style="font-weight: 900"
+                      >Select one if Pay-From Address is same as…</span
+                    >
+
+                    <label
+                      ><input
+                        type="radio"
+                        name="payFromMode"
+                        value="ship"
+                        checked
+                      />
+                      Ship-To Address</label
+                    >
+
+                    <label
+                      ><input type="radio" name="payFromMode" value="bill" />
+                      Bill-To Address</label
+                    >
+                  </div>
+                </div>
+
+                <div class="panel-b">
+                  <div class="row">
+                    <label for="payNameLine1">Name Line 1</label>
+
+                    <input
+                      id="payNameLine1"
+                      name="payNameLine1"
+                      type="text"
+                      data-label="Name Line 1"
+                    />
+
+                    <div class="field-error" data-for="payNameLine1"></div>
+                  </div>
+                  <div class="row">
+                    <label for="payDistMode">Dist Mode</label>
+
+                    <input
+                      id="payDistMode"
+                      name="payDistMode"
+                      type="text"
+                      data-label="Dist Mode"
+                    />
+
+                    <div class="field-error" data-for="payDistMode"></div>
+                  </div>
+                  <div class="row">
+                    <label for="payFacility">Facility Name</label>
+
+                    <input
+                      id="payFacility"
+                      name="payFacility"
+                      type="text"
+                      data-label="Pay-From Facility Name"
+                    />
+
+                    <div class="field-error" data-for="payFacility"></div>
+                  </div>
+
+                  <div class="row">
+                    <label for="payDba">DBA Name (Doing Business As)</label>
+
+                    <input
+                      id="payDba"
+                      name="payDba"
+                      type="text"
+                      data-label="Pay-From DBA Name"
+                    />
+
+                    <div class="field-error" data-for="payDba"></div>
+                  </div>
+                  <div class="row">
+                    <label for="payClassOfTrade">Class Of Trade</label>
+
+                    <input
+                      id="payClassOfTrade"
+                      name="payClassOfTrade"
+                      type="text"
+                      data-label="Class Of Trade"
+                    />
+
+                    <div class="field-error" data-for="payClassOfTrade"></div>
+                  </div>
+                  <div class="row">
+                    <label for="payAddr1">Address Line 1</label>
+
+                    <input
+                      id="payAddr1"
+                      name="payAddr1"
+                      type="text"
+                      data-label="Pay-From Address Line 1"
+                    />
+
+                    <div class="field-error" data-for="payAddr1"></div>
+                  </div>
+
+                  <div class="row">
+                    <label for="payAddr2">Address Line 2</label>
+
+                    <input
+                      id="payAddr2"
+                      name="payAddr2"
+                      type="text"
+                      data-label="Pay-From Address Line 2"
+                    />
+
+                    <div class="field-error" data-for="payAddr2"></div>
+                  </div>
+                  <div class="row">
+                    <label for="payPOBoxNumber">PO Box Number</label>
+
+                    <input
+                      id="payPOBoxNumber"
+                      name="payPOBoxNumber"
+                      type="text"
+                      data-label="PO Box Number"
+                    />
+
+                    <div class="field-error" data-for="payPOBoxNumber"></div>
+                  </div>
+
+                  <div class="row compact">
+                    <label for="payCity">City</label>
+                    <input
+                      id="payCity"
+                      name="payCity"
+                      type="text"
+                      data-label="Pay-To City"
+                    />
+                    <input
+                      id="payState"
+                      name="payState"
+                      type="text"
+                      placeholder="State"
+                      maxlength="2"
+                      data-label="pay-To State"
+                      data-type="state2"
+                    />
+                    <div class="field-error" data-for="payCity"></div>
+                  </div>
+
+                  <div class="row">
+                    <label for="payPostal">Postal Code</label>
+                    <input
+                      id="payPostal"
+                      name="payPostal"
+                      type="text"
+                      data-label="Pay-To Postal"
+                    />
+                    <div class="field-error" data-for="payPostal"></div>
+                  </div>
+                  <div class="row">
+                    <label for="payEmailAddress">Email Address</label>
+
+                    <input
+                      id="payEmailAddress"
+                      name="payEmailAddress"
+                      type="text"
+                      data-label="Email Address"
+                    />
+
+                    <div class="field-error" data-for="payEmailAddress"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+
+        <div class="step" data-step="2">
+          <div class="section-title">
+            Section D: Accounts Payable Contact Information
+          </div>
+
+          <div class="grid">
+            <div class="hint">
+              (If you do not have Accounts Payable department then provide
+              Purchasing/office manager contact)
+            </div>
+
+            <div class="row">
+              <label for="apName">Name</label>
+
+              <input
+                id="apName"
+                name="apName"
+                type="text"
+                data-label="AP Name"
+              />
+
+              <div class="field-error" data-for="apName"></div>
+            </div>
+
+            <div class="row">
+              <label for="apDeptPhone">Dept Phone Number</label>
+
+              <input
+                id="apDeptPhone"
+                name="apDeptPhone"
+                type="tel"
+                placeholder="e.g., 734-869-8703"
+                data-label="AP Dept Phone"
+                data-type="phone"
+              />
+
+              <div class="field-error" data-for="apDeptPhone"></div>
+            </div>
+
+            <div class="row">
+              <label for="apEmail">Email ID <span class="req">*</span></label>
+
+              <input
+                id="apEmail"
+                name="apEmail"
+                type="email"
+                data-required="true"
+                data-label="AP Email"
+                data-type="email"
+                placeholder="Please provide your business email ID (personal email IDs will not be accepted)."
+              />
+
+              <div class="field-error" data-for="apEmail"></div>
+              <!-- <div class="warn2">Please provide your business email ID (personal email IDs will not be accepted).</div> -->
+            </div>
+
+            <div class="row">
+              <label for="apBestTime">Best Time To Call</label>
+
+              <input
+                id="apBestTime"
+                name="apBestTime"
+                type="text"
+                data-label="AP Best Time To Call"
+                placeholder="e.g., 9am - 11am EST"
+              />
+              <div class="warn2">
+                In case JNJ needs more information or requires any additional
+                validation.
+              </div>
+              <div class="field-error" data-for="apBestTime"></div>
+            </div>
+          </div>
+
+          <div class="section-title">Section E: Tax Entity Information</div>
+
+          <div class="grid">
+            <div class="row">
+              <label>Is your Ship-To facility “Tax Exempt”?</label>
+
+              <div class="radio-line">
+                <label
+                  ><input type="radio" name="taxExempt" value="Yes" />
+                  Yes</label
+                >
+
+                <label
+                  ><input type="radio" name="taxExempt" value="No" checked />
+                  No</label
+                >
+              </div>
+            </div>
+
+            <div class="row">
+              <label>Is your Organization</label>
+
+              <div class="radio-line">
+                <label
+                  ><input
+                    type="radio"
+                    name="orgType"
+                    value="For Profit"
+                    checked
+                  />
+                  For Profit</label
+                >
+
+                <label
+                  ><input type="radio" name="orgType" value="Non Profit" /> Non
+                  Profit</label
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4 -->
+
+        <div class="step" data-step="3">
+          <div class="section-title">
+            Section F: Facility and Services Classification
+          </div>
+
+          <div class="grid">
+            <div class="row">
+              <label>What type of services is this facility providing?</label>
+
+              <div class="radio-line">
+                <label
+                  ><input type="radio" name="facilityType" value="Hospital" />
+                  Hospital</label
+                >
+
+                <label
+                  ><input type="radio" name="facilityType" value="Pharmacies" />
+                  Pharmacies</label
+                >
+
+                <label
+                  ><input
+                    type="radio"
+                    name="facilityType"
+                    value="Ambulatory Surgery Center"
+                    checked
+                  />
+                  Ambulatory Surgery Center</label
+                >
+
+                <label
+                  ><input type="radio" name="facilityType" value="Veterinary" />
+                  Veterinary</label
+                >
+
+                <label
+                  ><input
+                    type="radio"
+                    name="facilityType"
+                    value="Physician Account"
+                  />
+                  Physician Account</label
+                >
+
+                <label
+                  ><input type="radio" name="facilityType" value="Other" />
+                  Other</label
+                >
+
+                <label
+                  ><input
+                    type="radio"
+                    name="facilityType"
+                    value="Long Term Care"
+                  />
+                  Long Term Care</label
+                >
+              </div>
+            </div>
+
+            <div class="row">
+              <label for="identType"
+                >Please select one option and provide your Identification
+                Number</label
+              >
+
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: 220px 1fr;
+                  gap: 10px;
+                "
+              >
+                <select
+                  id="identType"
+                  name="identType"
+                  data-label="Identification Type"
+                >
+                  <option value="">Please Select</option>
+
+                  <option value="NPI">National Provider Identifier</option>
+                  <option value="DEA">DEA Registration Number</option>
+                  <option value="HIN">Health Industry Number</option>
+                  <option value="Tax ID">Pharmacy License Number</option>
+
+                  <option value="Other">Other</option>
+                </select>
+
+                <input
+                  id="identNumber"
+                  name="identNumber"
+                  type="text"
+                  data-label="Identification Number"
+                />
+              </div>
+
+              <div class="field-error" data-for="identType"></div>
+            </div>
+
+            <div class="row">
+              <label>Do you have On-site Diagnostics Services?</label>
+
+              <div class="radio-line">
+                <label
+                  ><input type="radio" name="diagSvc" value="Yes" /> Yes</label
+                >
+
+                <label
+                  ><input type="radio" name="diagSvc" value="No" checked />
+                  No</label
+                >
+              </div>
+            </div>
+
+            <div class="row">
+              <label
+                >Any GPO (Group Purchasing Organization) Affiliation?</label
+              >
+
+              <div class="hint">
+                If affiliated to any GPO (Vizient, HPG, Intalere or Premier),
+                choose Yes.
+              </div>
+            </div>
+
+            <div class="row">
+              <label></label>
+
+              <div class="radio-line">
+                <label
+                  ><input type="radio" name="gpoAff" value="Yes" /> Yes</label
+                >
+
+                <label
+                  ><input type="radio" name="gpoAff" value="No" checked />
+                  No</label
+                >
+              </div>
+            </div>
+
+            <div
+              id="gpoBlock"
+              style="
+                display: none;
+                border: 1px dashed var(--border);
+                padding: 10px;
+                border-radius: 10px;
+              "
+            >
+              <div class="row">
+                <label for="gpoId">GPO ID</label>
+
+                <input
+                  id="gpoId"
+                  name="gpoId"
+                  type="text"
+                  data-label="GPO ID"
+                />
+
+                <div class="field-error" data-for="gpoId"></div>
+              </div>
+
+              <div class="row">
+                <label for="gpoName">GPO Name</label>
+
+                <input
+                  id="gpoName"
+                  name="gpoName"
+                  type="text"
+                  data-label="GPO Name"
+                />
+
+                <div class="field-error" data-for="gpoName"></div>
+              </div>
+
+              <div class="row">
+                <label for="gpoComments">Additional comments</label>
+
+                <input
+                  id="gpoComments"
+                  name="gpoComments"
+                  type="text"
+                  data-label="GPO Comments"
+                />
+
+                <div class="field-error" data-for="gpoComments"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-title">Section G: Additional Information</div>
+
+          <div class="grid">
+            <div class="row">
+              <label for="salesRep"
+                >J&amp;J Sales Rep Name / Contact Number</label
+              >
+
+              <input
+                id="salesRep"
+                name="salesRep"
+                type="text"
+                data-label="J&J Sales Rep"
+              />
+
+              <div class="field-error" data-for="salesRep"></div>
+            </div>
+
+            <div class="row">
+              <label for="productsInterested"
+                >What Products are you interested in?</label
+              >
+
+              <input
+                id="productsInterested"
+                name="productsInterested"
+                type="text"
+                data-label="Products Interested"
+              />
+
+              <div class="field-error" data-for="productsInterested"></div>
+            </div>
+
+            <div class="row">
+              <label
+                >Will you be interested in Ethicon Biological Products?</label
+              >
+
+              <div class="radio-line">
+                <label
+                  ><input type="radio" name="ethiconBio" value="Yes" />
+                  Yes</label
+                >
+
+                <label
+                  ><input type="radio" name="ethiconBio" value="No" checked />
+                  No</label
+                >
+              </div>
+            </div>
+
+            <div
+              id="bioBlock"
+              style="
+                display: none;
+                border: 1px dashed var(--border);
+                padding: 10px;
+                border-radius: 10px;
+              "
+            >
+              <div class="row">
+                <label for="pharmacyLicense">Pharmacy License Number</label>
+
+                <input
+                  id="pharmacyLicense"
+                  name="pharmacyLicense"
+                  type="text"
+                  data-label="Pharmacy License Number"
+                />
+
+                <div class="field-error" data-for="pharmacyLicense"></div>
+              </div>
+
+              <div class="row">
+                <label for="bioProducts"
+                  >Biological product names you are interested in</label
+                >
+
+                <input
+                  id="bioProducts"
+                  name="bioProducts"
+                  type="text"
+                  data-label="Biological Products"
+                />
+
+                <div class="field-error" data-for="bioProducts"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 5 -->
+
+        <div class="step" data-step="4">
+          <div class="section-title">Section H: Approver Information</div>
+
+          <div class="grid">
+            <div class="row">
+              <label for="apprName">Name</label>
+
+              <input
+                id="apprName"
+                name="apprName"
+                type="text"
+                data-label="Approver Name"
+              />
+
+              <div class="field-error" data-for="apprName"></div>
+            </div>
+
+            <div class="row">
+              <label for="apprPhone">Business Phone Number</label>
+
+              <input
+                id="apprPhone"
+                name="apprPhone"
+                type="tel"
+                data-label="Approver Phone"
+                data-type="phone"
+              />
+
+              <div class="field-error" data-for="apprPhone"></div>
+            </div>
+
+            <div class="row">
+              <label for="apprEmail">Email ID <span class="req">*</span></label>
+
+              <input
+                id="apprEmail"
+                name="apprEmail"
+                type="email"
+                data-required="true"
+                data-label="Approver Email"
+                data-type="email"
+              />
+
+              <div class="field-error" data-for="apprEmail"></div>
+            </div>
+
+            <div class="row">
+              <label for="apprPosition">Position</label>
+
+              <input
+                id="apprPosition"
+                name="apprPosition"
+                type="text"
+                data-label="Approver Position"
+              />
+
+              <div class="field-error" data-for="apprPosition"></div>
+            </div>
+
+            <div class="row">
+              <label for="apprBestTime">Best Time To Call</label>
+
+              <input
+                id="apprBestTime"
+                name="apprBestTime"
+                type="text"
+                data-label="Approver Best Time To Call"
+                placeholder="e.g., 9 am - 4 pm"
+              />
+
+              <div class="field-error" data-for="apprBestTime"></div>
+            </div>
+
+            <div class="row">
+              <label for="additionalComments">Additional Comments</label>
+
+              <textarea
+                id="additionalComments"
+                name="additionalComments"
+                data-label="Additional Comments"
+              ></textarea>
+
+              <div class="field-error" data-for="additionalComments"></div>
+            </div>
+
+            <div class="warn">
+              Disclaimer: All information provided is subject to verification.
+              Incomplete information may require follow-up.
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="row">
+              <label>Preview Output (JSON)</label>
+
+              <div class="hint">
+                Use Export JSON/CSV (top buttons) or Submit below.
+              </div>
+            </div>
+
+            <pre id="output">{}</pre>
+          </div>
+        </div>
+
+        <div class="footerbar">
+          <div class="status" id="status">Ready.</div>
+
+          <div style="display: flex; gap: 10px; flex-wrap: wrap">
+            <button class="btn small ghost" type="button" id="btnSaveDraft">
+              Save Data
+            </button>
+
+            <button class="btn small ghost" type="button" id="btnLoadDraft">
+              Load Data
+            </button>
+
+            <button type="button" class="btn ghost" id="btnPrev">
+              Previous
+            </button>
+
+            <button type="button" class="btn" id="btnNext">Next</button>
+
+            <button type="button" class="btn secondary" id="btnSubmit">
+              Submit
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      ;(() => {
+        const $ = id => document.getElementById(id)
+
+        const form = $('form')
+
+        const steps = Array.from(document.querySelectorAll('.step'))
+
+        const bar = $('bar')
+
+        const stepMeta = $('stepMeta')
+
+        const chipsWrap = $('stepChips')
+
+        const errorsBox = $('errors')
+
+        const statusEl = $('status')
+
+        const outputEl = $('output')
+
+        const DRAFT_KEY = 'jnj_form_clone_smart_draft_v1'
+
+        // ---------- Step Model ----------
+
+        const stepDefs = [
+          { title: 'Request Details', stepIndex: 0 },
+
+          { title: 'Ship-To / Bill-To / Pay-From', stepIndex: 1 },
+
+          { title: 'Accounts Payable & Tax', stepIndex: 2 },
+
+          { title: 'Facility & Services', stepIndex: 3 },
+
+          { title: 'Approver Information', stepIndex: 4 }
+        ]
+
+        let currentStep = 0
+
+        function setStatus(msg) {
+          statusEl.textContent = msg
+        }
+
+        function renderChips() {
+          chipsWrap.innerHTML = ''
+
+          stepDefs.forEach((s, i) => {
+            const chip = document.createElement('div')
+
+            chip.className = 'chip'
+
+            chip.textContent = `${i + 1}. ${s.title}`
+
+            chip.addEventListener('click', () =>
+              gotoStep(i, { allowForwardIfValid: true })
+            )
+
+            chip.dataset.step = String(i)
+
+            chipsWrap.appendChild(chip)
+          })
+        }
+
+        function printAllSteps() {
+          const steps = document.querySelectorAll('.step')
+          const activeIndex = [...steps].findIndex(s =>
+            s.classList.contains('active')
+          )
+
+          // Show all steps
+          steps.forEach(s => s.classList.add('active'))
+
+          // Print
+          window.print()
+
+          // Restore previous step after print
+          setTimeout(() => {
+            steps.forEach((s, i) => {
+              s.classList.toggle('active', i === activeIndex)
+            })
+          }, 500)
+        }
+
+        function updateProgress() {
+          const percent = Math.round(
+            ((currentStep + 1) / stepDefs.length) * 100
+          )
+
+          if (currentStep === 0) {
+            bar.style.width = '0%'
+          } else {
+            bar.style.width = percent + '%'
+          }
+
+          stepMeta.textContent = `Step ${currentStep + 1} of ${stepDefs.length}`
+
+          // chip states
+
+          Array.from(chipsWrap.children).forEach((chip, i) => {
+            chip.classList.toggle('active', i === currentStep)
+
+            chip.classList.remove('done', 'blocked')
+
+            if (i < currentStep) chip.classList.add('done')
+
+            if (i > currentStep) chip.classList.add('blocked')
+          })
+        }
+
+        function showStep(i) {
+          steps.forEach(s => s.classList.remove('active'))
+
+          steps[i].classList.add('active')
+
+          currentStep = i
+
+          updateProgress()
+
+          updateButtons()
+
+          refreshOutputPreview()
+
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+
+        function updateButtons() {
+          $('btnPrev').disabled = currentStep === 0
+
+          $('btnNext').disabled = currentStep === stepDefs.length - 1
+
+          $('btnSubmit').disabled = currentStep !== stepDefs.length - 1
+        }
+
+        // ---------- Validation ----------
+
+        function setFieldError(id, message) {
+          const el = $(id)
+
+          if (!el) return
+
+          const err = document.querySelector(`.field-error[data-for="${id}"]`)
+
+          if (message) {
+            el.classList.add('invalid')
+
+            el.classList.remove('valid')
+
+            if (err) {
+              err.style.display = 'block'
+
+              err.textContent = message
+            }
+          } else {
+            el.classList.remove('invalid')
+
+            if (String(el.value || '').trim()) el.classList.add('valid')
+            else el.classList.remove('valid')
+
+            if (err) {
+              err.style.display = 'none'
+
+              err.textContent = ''
+            }
+          }
+        }
+
+        function isVisible(el) {
+          // hidden by blocks (display:none) -> offsetParent null
+
+          return el && el.offsetParent !== null
+        }
+
+        function validateField(el) {
+          if (!el || !isVisible(el)) return true
+
+          const id = el.id
+
+          const label = el.getAttribute('data-label') || id
+
+          const required = el.getAttribute('data-required') === 'true'
+
+          const type = el.getAttribute('data-type') || ''
+
+          const v = String(el.value || '').trim()
+
+          if (required && !v) {
+            setFieldError(id, `${label} is required.`)
+
+            return false
+          }
+
+          if (v) {
+            if (type === 'email') {
+              if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+                setFieldError(id, `${label} must be a valid email format.`)
+
+                return false
+              }
+            }
+
+            if (type === 'state2') {
+              if (v.length !== 2 || !/^[A-Za-z]{2}$/.test(v)) {
+                setFieldError(id, `${label} must be 2 letters (e.g., MI).`)
+
+                return false
+              }
+            }
+
+            if (type === 'postal') {
+              // allow US ZIP or general alnum (corporate forms vary)
+
+              if (!/^[A-Za-z0-9 -]{3,12}$/.test(v)) {
+                setFieldError(id, `${label} looks invalid.`)
+
+                return false
+              }
+            }
+
+            if (type === 'phone') {
+              // keep digits + separators, require at least 7 digits if provided
+
+              const digits = v.replace(/\D/g, '')
+
+              if (digits.length > 0 && digits.length < 7) {
+                setFieldError(id, `${label} must have at least 7 digits.`)
+
+                return false
+              }
+            }
+          }
+
+          setFieldError(id, '')
+
+          return true
+        }
+
+        function validateStep(stepIndex) {
+          const stepEl = steps[stepIndex]
+
+          const inputs = Array.from(
+            stepEl.querySelectorAll('input, select, textarea')
+          )
+
+            // ignore radios (validated as group only if required, which we don't enforce here)
+
+            .filter(el => el.type !== 'radio' && el.type !== 'checkbox')
+
+          let ok = true
+
+          errorsBox.style.display = 'none'
+
+          errorsBox.textContent = ''
+
+          inputs.forEach(el => {
+            if (!validateField(el)) ok = false
+          })
+
+          // Extra rule: if GPO Aff = Yes, at least one GPO field should be filled (optional but helpful)
+
+          if (stepIndex === 3) {
+            const gpoYes =
+              document.querySelector('input[name="gpoAff"]:checked')?.value ===
+              'Yes'
+
+            if (gpoYes) {
+              const gpoId = $('gpoId').value.trim()
+
+              const gpoName = $('gpoName').value.trim()
+
+              if (!gpoId && !gpoName) {
+                ok = false
+
+                errorsBox.style.display = 'block'
+
+                errorsBox.textContent =
+                  'GPO Affiliation is Yes — please provide at least GPO ID or GPO Name.'
+              }
+            }
+          }
+
+          if (!ok && errorsBox.style.display !== 'block') {
+            errorsBox.style.display = 'block'
+
+            errorsBox.textContent =
+              'Please correct the highlighted fields before proceeding.'
+          }
+
+          return ok
+        }
+
+        // Live validation
+
+        document.addEventListener('input', e => {
+          const el = e.target
+
+          if (!el || !el.matches('input,select,textarea')) return
+
+          if (el.type === 'radio' || el.type === 'checkbox') return
+
+          validateField(el)
+
+          refreshOutputPreview()
+
+          autosyncCopies()
+        })
+
+        // ---------- Smart Copy Logic (Bill-To / Pay-From) ----------
+
+        const shipKeys = [
+          'Facility',
+          'Dba',
+          'Addr1',
+          'Addr2',
+          'NameLine1',
+          'DistMode',
+          'ClassOfTrade',
+          'POBoxNumber',
+          'EmailAddress',
+          'City',
+          'State',
+          'Postal'
+        ]
+
+        const billKeys = [
+          'Facility',
+          'Dba',
+          'Addr1',
+          'Addr2',
+          'NameLine1',
+          'DistMode',
+          'ClassOfTrade',
+          'POBoxNumber',
+          'EmailAddress',
+          'City',
+          'State',
+          'Postal'
+        ]
+
+        const payKeys = [
+          'Facility',
+          'Dba',
+          'Addr1',
+          'Addr2',
+          'NameLine1',
+          'DistMode',
+          'ClassOfTrade',
+          'POBoxNumber',
+          'EmailAddress',
+          'City',
+          'State',
+          'Postal'
+        ]
+
+        function copy(prefixFrom, prefixTo, keys) {
+          keys.forEach(k => {
+            const from = $(`${prefixFrom}${k}`)
+
+            const to = $(`${prefixTo}${k}`)
+
+            if (from && to) to.value = from.value || ''
+          })
+        }
+
+        function setReadonly(prefix, keys, on) {
+          keys.forEach(k => {
+            const el = $(`${prefix}${k}`)
+
+            if (el) el.readOnly = on
+          })
+        }
+
+        function autosyncCopies() {
+          // Bill same as Ship
+
+          if ($('billSameAsShip').checked) {
+            copy('ship', 'bill', billKeys)
+
+            setReadonly('bill', billKeys, true)
+          } else {
+            setReadonly('bill', billKeys, false)
+          }
+
+          // Pay-from mode locks pay fields and copies
+
+          const mode =
+            document.querySelector('input[name="payFromMode"]:checked')
+              ?.value || 'ship'
+
+          setReadonly('pay', payKeys, true)
+
+          if (mode === 'ship') copy('ship', 'pay', payKeys)
+
+          if (mode === 'bill') copy('bill', 'pay', payKeys)
+        }
+
+        function wireCopyToggles() {
+          $('billSameAsShip').addEventListener('change', () => {
+            autosyncCopies()
+
+            setStatus(
+              $('billSameAsShip').checked
+                ? 'Bill-To locked to Ship-To.'
+                : 'Bill-To unlocked.'
+            )
+          })
+
+          document.querySelectorAll('input[name="payFromMode"]').forEach(r => {
+            r.addEventListener('change', () => {
+              autosyncCopies()
+
+              const mode = document.querySelector(
+                'input[name="payFromMode"]:checked'
+              )?.value
+
+              setStatus(
+                mode === 'ship'
+                  ? 'Pay-From locked to Ship-To.'
+                  : 'Pay-From locked to Bill-To.'
+              )
+            })
+          })
+        }
+
+        // ---------- Restore Dropdowns ----------
+
+        function restoreDropdownState() {
+          const yes =
+            document.querySelector('input[name="gpoAff"]:checked')?.value ===
+            'Yes'
+
+          $('gpoBlock').style.display = yes ? 'block' : 'none'
+        }
+
+        // ---------- Conditional Blocks ----------
+
+        function wireConditionals() {
+          document.querySelectorAll('input[name="gpoAff"]').forEach(r => {
+            r.addEventListener('change', () => {
+              const yes =
+                document.querySelector('input[name="gpoAff"]:checked')
+                  ?.value === 'Yes'
+
+              $('gpoBlock').style.display = yes ? 'block' : 'none'
+
+              refreshOutputPreview()
+            })
+          })
+
+          document.querySelectorAll('input[name="ethiconBio"]').forEach(r => {
+            r.addEventListener('change', () => {
+              const yes =
+                document.querySelector('input[name="ethiconBio"]:checked')
+                  ?.value === 'Yes'
+
+              $('bioBlock').style.display = yes ? 'block' : 'none'
+
+              refreshOutputPreview()
+            })
+          })
+        }
+
+        // ---------- Data Export ----------
+
+        function collectData() {
+          const data = {}
+
+          const all = Array.from(
+            document.querySelectorAll('input,select,textarea')
+          )
+
+          all.forEach(el => {
+            if (!el.name && !el.id) return
+
+            // skip hidden blocks (but keep radios/checkboxes as they represent selections)
+
+            // if ((el.type !== "radio" && el.type !== "checkbox") && !isVisible(el)) return;
+
+            const key = el.name || el.id
+
+            if (el.type === 'radio') {
+              if (el.checked) data[key] = el.value
+
+              return
+            }
+
+            if (el.type === 'checkbox') {
+              data[key] = !!el.checked
+
+              return
+            }
+
+            const v = String(el.value || '').trim()
+
+            if (v !== '') data[key] = v
+          })
+
+          return data
+        }
+
+        function toCSVRow(obj) {
+          // stable, sorted headers for repeatability
+
+          const headers = Object.keys(obj).sort()
+
+          const escape = s => `"${String(s).replace(/"/g, '""')}"`
+
+          const row = headers.map(h => escape(obj[h] ?? '')).join(',')
+
+          return { headers, csv: headers.join(',') + '\n' + row + '\n' }
+        }
+
+        function downloadText(filename, text, mime = 'text/plain') {
+          const blob = new Blob([text], { type: mime })
+
+          const url = URL.createObjectURL(blob)
+
+          const a = document.createElement('a')
+
+          a.href = url
+
+          a.download = filename
+
+          document.body.appendChild(a)
+
+          a.click()
+
+          a.remove()
+
+          URL.revokeObjectURL(url)
+        }
+
+        function refreshOutputPreview() {
+          // only show preview on final step, but keep it updated always
+
+          const data = collectData()
+
+          if (outputEl) outputEl.textContent = JSON.stringify(data, null, 2)
+        }
+
+        // ---------- Draft ----------
+
+        function saveDraft() {
+          const data = collectData()
+
+          localStorage.setItem(
+            DRAFT_KEY,
+            JSON.stringify({ savedAt: new Date().toISOString(), data })
+          )
+
+          setStatus('Draft saved to this browser (local storage).')
+        }
+
+        function loadDraft() {
+          const raw = localStorage.getItem(DRAFT_KEY)
+
+          if (!raw) {
+            setStatus('No draft found in this browser.')
+
+            return
+          }
+
+          const parsed = JSON.parse(raw)
+
+          const data = parsed.data || {}
+
+          // set values
+
+          Array.from(
+            document.querySelectorAll('input,select,textarea')
+          ).forEach(el => {
+            const key = el.name || el.id
+
+            if (!key) return
+
+            if (el.type === 'radio') {
+              el.checked = data[key] === el.value
+
+              return
+            }
+
+            if (el.type === 'checkbox') {
+              if (typeof data[key] === 'boolean') el.checked = data[key]
+
+              return
+            }
+
+            if (data[key] !== undefined) el.value = data[key]
+          })
+
+          autosyncCopies()
+
+          refreshOutputPreview()
+          restoreDropdownState()
+
+          setStatus(`Draft loaded (savedAt: ${parsed.savedAt || 'unknown'}).`)
+        }
+
+        // ---------- Navigation ----------
+
+        function gotoStep(target, opts = { allowForwardIfValid: false }) {
+          if (target < 0 || target >= stepDefs.length) return
+
+          if (target > currentStep) {
+            // moving forward
+
+            const ok = validateStep(currentStep)
+
+            if (!ok) return
+
+            // if jumping multiple steps, validate each intermediate step quickly
+
+            if (opts.allowForwardIfValid) {
+              for (let i = currentStep + 1; i <= target; i++) {
+                // validate previous step after entering it? keep simple: just allow the jump since prior validated
+                // and the user may skip optional sections.
+              }
+            }
+          }
+
+          errorsBox.style.display = 'none'
+
+          showStep(target)
+        }
+
+        function next() {
+          if (!validateStep(currentStep)) return
+
+          gotoStep(currentStep + 1)
+
+          setStatus('OK.')
+        }
+
+        function prev() {
+          gotoStep(currentStep - 1)
+
+          setStatus('OK.')
+        }
+
+        function submit() {
+          // validate all steps
+
+          for (let i = 0; i < stepDefs.length; i++) {
+            if (!validateStep(i)) {
+              showStep(i)
+
+              setStatus('Submission blocked: fix errors.')
+
+              return
+            }
+          }
+
+          submitViaEmailKeyValue()
+          // setStatus("Submitted (offline). Export JSON/CSV or Print to save as PDF.");
+
+          // alert("Validated successfully. Use Export JSON/CSV or Print to save a PDF.");
+
+          // console.log("Submission payload:", data);
+        }
+
+        function submitViaEmailKeyValue() {
+          const bodyText = `Hello,
+ 
+          Please see the submitted form details below:
+          
+          ${collectDataAsKeyValueText()}
+          
+          Thank you.`
+
+          const mailto =
+            `mailto:mdm@its.jnj.com` +
+            `?subject=${encodeURIComponent(
+              'MDM Request – Smart Form Submission'
+            )}` +
+            `&body=${encodeURIComponent(bodyText)}`
+
+          window.location.href = mailto
+        }
+
+        function collectDataAsKeyValueText() {
+          const lines = []
+          const elements = Array.from(
+            document.querySelectorAll('input, select, textarea')
+          )
+
+          elements.forEach(el => {
+            const key = el.name || el.id
+            if (!key) return
+
+            // Radio buttons → only checked
+            if (el.type === 'radio') {
+              if (!el.checked) return
+              lines.push(`${key}: ${el.value}`)
+              return
+            }
+
+            // Checkboxes → true / false
+            if (el.type === 'checkbox') {
+              lines.push(`${key}: ${el.checked ? 'Yes' : 'No'}`)
+              return
+            }
+
+            const value = (el.value || '').toString().trim()
+            if (value === '') return
+
+            lines.push(`${key}: ${value}`)
+          })
+
+          return lines.join('\n')
+        }
+
+        function toSingleRowCsv(dataObj) {
+          const headers = Object.keys(dataObj).sort()
+          const esc = v => `"${String(v ?? '').replace(/"/g, '""')}"`
+          const headerLine = headers.map(esc).join(',')
+          const valueLine = headers.map(h => esc(dataObj[h])).join(',')
+          return headerLine + '\n' + valueLine
+        }
+
+        function openMailtoWithCsv({ to, subject, csv }) {
+          const body = `Hello,
+ 
+            Please see the submitted form data details below:
+            
+            ${csv}
+
+            Or see the attached file. <attach your downloaded csv/pdf file>
+            
+            Thank you.`
+
+          const mailtoUrl =
+            `mailto:${encodeURIComponent(to)}?` +
+            `subject=${encodeURIComponent(subject)}&` +
+            `body=${encodeURIComponent(body)}`
+
+          window.location.href = mailtoUrl
+        }
+
+        function resetAll() {
+          if (
+            !confirm(
+              'Reset the form? This will clear all fields (draft remains stored unless you overwrite it).'
+            )
+          )
+            return
+
+          form.reset()
+
+          errorsBox.style.display = 'none'
+
+          errorsBox.textContent = ''
+
+          // hide blocks, reset readonly copies
+
+          $('gpoBlock').style.display = 'none'
+
+          $('bioBlock').style.display = 'none'
+
+          $('billSameAsShip').checked = true
+
+          document.querySelector(
+            'input[name="payFromMode"][value="ship"]'
+          ).checked = true
+
+          autosyncCopies()
+
+          // clear validation visuals
+
+          Array.from(document.querySelectorAll('.invalid,.valid')).forEach(
+            el => {
+              el.classList.remove('invalid', 'valid')
+            }
+          )
+
+          Array.from(document.querySelectorAll('.field-error')).forEach(e => {
+            e.style.display = 'none'
+            e.textContent = ''
+          })
+
+          showStep(0)
+
+          setStatus('Reset complete.')
+        }
+
+        // ---------- Wire Buttons ----------
+
+        function wireButtons() {
+          $('btnPrev').addEventListener('click', prev)
+
+          $('btnNext').addEventListener('click', next)
+
+          $('btnSubmit').addEventListener('click', submit)
+
+          $('btnSaveDraft').addEventListener('click', saveDraft)
+
+          $('btnLoadDraft').addEventListener('click', loadDraft)
+
+          $('btnExportJSON').addEventListener('click', () => {
+            // validate current step only (export can be allowed even if incomplete)
+
+            const data = collectData()
+
+            const txt = JSON.stringify(data, null, 2)
+
+            downloadText('form_export.json', txt, 'application/json')
+
+            setStatus('JSON exported.')
+          })
+
+          $('btnExportCSV').addEventListener('click', () => {
+            const data = collectData()
+
+            const { csv } = toCSVRow(data)
+
+            downloadText('MDM-SmartForm.csv', csv, 'text/csv')
+
+            setStatus('CSV exported.')
+          })
+
+          $('btnPrint').addEventListener('click', () => printAllSteps())
+
+          $('btnReset').addEventListener('click', resetAll)
+
+          // keyboard convenience
+
+          document.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+              // Ctrl+Enter submits if on last step, else next
+
+              if (currentStep === stepDefs.length - 1) submit()
+              else next()
+            }
+          })
+        }
+
+        // ---------- Init ----------
+
+        renderChips()
+
+        wireButtons()
+
+        wireCopyToggles()
+
+        wireConditionals()
+
+        // Default lock/copy behavior
+
+        autosyncCopies()
+
+        showStep(0)
+
+        refreshOutputPreview()
+
+        setStatus('Ready. Fill Step 1 then click Next.')
+      })()
+    </script>
+  </body>
+</html>
